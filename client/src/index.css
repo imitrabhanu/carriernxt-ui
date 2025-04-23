@@ -14,13 +14,13 @@
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
   
-  /* Primary: #4F46E5 (Indigo) */
-  --primary: 246 80% 60%;
-  --primary-foreground: 210 40% 98%;
+  /* Primary: Light Teal */
+  --primary: 174 60% 60%;
+  --primary-foreground: 0 0% 100%;
   
-  /* Secondary: #10B981 (Emerald) */
-  --secondary: 160 84% 39%;
-  --secondary-foreground: 355.7 100% 97.3%;
+  /* Secondary: Light Blue */
+  --secondary: 199 70% 60%;
+  --secondary-foreground: 0 0% 100%;
   
   /* Accent: #F59E0B (Amber) */
   --accent: 35 92% 50%;
@@ -33,21 +33,21 @@
   --radius: 0.5rem;
   
   /* Chart colors */
-  --chart-1: 246 80% 60%;
-  --chart-2: 160 84% 39%;
+  --chart-1: 174 60% 60%;
+  --chart-2: 199 70% 60%;
   --chart-3: 35 92% 50%;
-  --chart-4: 262 83% 58%;
-  --chart-5: 199 89% 48%;
+  --chart-4: 184 65% 55%;
+  --chart-5: 164 70% 50%;
   
   /* Sidebar colors */
-  --sidebar-background: 246 80% 60%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 210 40% 98%;
-  --sidebar-primary-foreground: 246 80% 60%;
-  --sidebar-accent: 265 84% 70%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-border: 263 70% 71%;
-  --sidebar-ring: 263 70% 71%;
+  --sidebar-background: 174 60% 60%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 0 0% 100%;
+  --sidebar-primary-foreground: 174 60% 60%;
+  --sidebar-accent: 199 70% 60%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 174 45% 75%;
+  --sidebar-ring: 174 45% 75%;
 }
 
 .dark {
@@ -62,13 +62,13 @@
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   
-  /* Primary: #4F46E5 (Indigo) - brightened for dark mode */
-  --primary: 246 80% 67%;
-  --primary-foreground: 210 40% 98%;
+  /* Primary: Light Teal - brightened for dark mode */
+  --primary: 174 65% 65%;
+  --primary-foreground: 0 0% 100%;
   
-  /* Secondary: #10B981 (Emerald) - brightened for dark mode */
-  --secondary: 160 84% 46%;
-  --secondary-foreground: 210 40% 98%;
+  /* Secondary: Light Blue - brightened for dark mode */
+  --secondary: 199 75% 65%;
+  --secondary-foreground: 0 0% 100%;
   
   /* Accent: #F59E0B (Amber) - brightened for dark mode */
   --accent: 35 92% 57%;
