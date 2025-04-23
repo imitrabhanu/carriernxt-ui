@@ -52,7 +52,10 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
-            <Button onClick={scrollToEarlyAccess}>Get Early Access</Button>
+            <Button onClick={scrollToEarlyAccess} className="mr-2">Get Early Access</Button>
+            <Link href="/auth">
+              <Button variant="outline">Admin Login</Button>
+            </Link>
           </nav>
 
           {/* Mobile menu */}
@@ -88,6 +91,9 @@ const Header = () => {
                 >
                   Get Early Access
                 </Button>
+                <Link href="/auth" onClick={() => setIsOpen(false)}>
+                  <Button variant="outline" className="w-full mt-4">Admin Login</Button>
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
