@@ -86,7 +86,7 @@ const EarlyAccessForm = () => {
             <FormItem>
               <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} />
+                <Input placeholder="Your name" {...field} className="text-gray-900" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,7 +100,7 @@ const EarlyAccessForm = () => {
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input placeholder="10-digit mobile number" {...field} />
+                <Input placeholder="10-digit mobile number" {...field} className="text-gray-900" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,7 +114,7 @@ const EarlyAccessForm = () => {
             <FormItem>
               <FormLabel>Email Address</FormLabel>
               <FormControl>
-                <Input placeholder="your@email.com" {...field} />
+                <Input placeholder="your@email.com" {...field} className="text-gray-900" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,9 +127,9 @@ const EarlyAccessForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Current Education Level</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-gray-900">
                     <SelectValue placeholder="Select your education level" />
                   </SelectTrigger>
                 </FormControl>
