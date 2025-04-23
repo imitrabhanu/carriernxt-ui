@@ -3,6 +3,8 @@ import {
   leads, type Lead, type InsertLead,
   contactMessages, type ContactMessage, type InsertContactMessage
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -16,65 +18,50 @@ export interface IStorage {
   getContactMessages(): Promise<ContactMessage[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private leadsData: Map<number, Lead>;
-  private contactMessagesData: Map<number, ContactMessage>;
-  
-  private userId: number;
-  private leadId: number;
-  private contactMessageId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.leadsData = new Map();
-    this.contactMessagesData = new Map();
-    
-    this.userId = 1;
-    this.leadId = 1;
-    this.contactMessageId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result[0];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const result = await db.select().from(users).where(eq(users.username, username));
+    return result[0];
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const result = await db.insert(users).values(insertUser).returning();
+    return result[0];
   }
   
   async createLead(insertLead: InsertLead): Promise<Lead> {
-    const id = this.leadId++;
-    const createdAt = new Date();
-    const lead: Lead = { ...insertLead, id, createdAt };
-    this.leadsData.set(id, lead);
-    return lead;
+    // Ensure education is null when undefined to match the database schema
+    const leadData = {
+      ...insertLead,
+      education: insertLead.education ?? null
+    };
+    const result = await db.insert(leads).values(leadData).returning();
+    return result[0];
   }
   
   async getLeads(): Promise<Lead[]> {
-    return Array.from(this.leadsData.values());
+    return await db.select().from(leads).orderBy(leads.createdAt);
   }
   
   async createContactMessage(insertMessage: InsertContactMessage): Promise<ContactMessage> {
-    const id = this.contactMessageId++;
-    const createdAt = new Date();
-    const message: ContactMessage = { ...insertMessage, id, createdAt };
-    this.contactMessagesData.set(id, message);
-    return message;
+    // Ensure subject is null when undefined to match the database schema
+    const messageData = {
+      ...insertMessage,
+      subject: insertMessage.subject ?? null
+    };
+    const result = await db.insert(contactMessages).values(messageData).returning();
+    return result[0];
   }
   
   async getContactMessages(): Promise<ContactMessage[]> {
-    return Array.from(this.contactMessagesData.values());
+    return await db.select().from(contactMessages).orderBy(contactMessages.createdAt);
   }
 }
 
-export const storage = new MemStorage();
+// Replace MemStorage with DatabaseStorage
+export const storage = new DatabaseStorage();
