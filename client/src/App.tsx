@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,13 +11,20 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
+import AuthPage from "@/pages/auth-page";
+import AdminPage from "@/pages/admin-page";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ProtectedRoute } from "@/lib/protected-route";
+import { AuthProvider } from "@/hooks/use-auth";
 
 function Router() {
+  const [location] = useLocation();
+  const isAdminRoute = location === "/admin" || location === "/auth";
+  
   return (
     <>
-      <Header />
+      {!isAdminRoute && <Header />}
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
@@ -26,9 +33,11 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/terms" component={Terms} />
+        <Route path="/auth" component={AuthPage} />
+        <ProtectedRoute path="/admin" component={AdminPage} />
         <Route component={NotFound} />
       </Switch>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </>
   );
 }
@@ -36,10 +45,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
