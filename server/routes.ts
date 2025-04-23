@@ -5,7 +5,18 @@ import { insertLeadSchema, insertContactMessageSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 import { setupAuth } from "./auth";
 
+// Middleware to check if user is authenticated
+function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: "Unauthorized" });
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup authentication
+  setupAuth(app);
+  
   // API routes
   app.post("/api/leads", async (req: Request, res: Response) => {
     try {
@@ -27,13 +38,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.get("/api/leads", async (req: Request, res: Response) => {
+  app.get("/api/leads", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const leads = await storage.getLeads();
       return res.status(200).json(leads);
     } catch (error) {
       console.error("Error fetching leads:", error);
       return res.status(500).json({ message: "Failed to fetch leads" });
+    }
+  });
+  
+  app.get("/api/contact", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const messages = await storage.getContactMessages();
+      return res.status(200).json(messages);
+    } catch (error) {
+      console.error("Error fetching contact messages:", error);
+      return res.status(500).json({ message: "Failed to fetch contact messages" });
     }
   });
   
@@ -54,16 +75,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating contact message:", error);
       return res.status(500).json({ message: "Failed to save contact message" });
-    }
-  });
-  
-  app.get("/api/contact", async (req: Request, res: Response) => {
-    try {
-      const messages = await storage.getContactMessages();
-      return res.status(200).json(messages);
-    } catch (error) {
-      console.error("Error fetching contact messages:", error);
-      return res.status(500).json({ message: "Failed to fetch contact messages" });
     }
   });
 
