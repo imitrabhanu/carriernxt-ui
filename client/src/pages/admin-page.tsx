@@ -22,20 +22,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Lead, ContactMessage } from "@shared/schema";
 import { Loader2, LogOut } from "lucide-react";
 import { formatDistance } from "date-fns";
+import { Lead, ContactMessage } from "@/lib/services";
 
 export default function AdminPage() {
   const { user, logoutMutation } = useAuth();
   
   const { data: leads = [], isLoading: isLeadsLoading } = useQuery<Lead[]>({
-    queryKey: ["/api/leads"],
+    queryKey: ["/leads"],
     enabled: !!user,
   });
   
   const { data: contactMessages = [], isLoading: isContactsLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/api/contact"],
+    queryKey: ["/contact"],
     enabled: !!user,
   });
   
@@ -48,7 +48,7 @@ export default function AdminPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="flex items-center gap-4">
-          <p className="text-muted-foreground">Welcome, {user?.username}</p>
+          <p className="text-muted-foreground">Welcome, {user?.name}</p>
           <Button variant="outline" size="sm" onClick={handleLogout} disabled={logoutMutation.isPending}>
             {logoutMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4 mr-2" />}
             Logout

@@ -2,9 +2,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { contactFormSchema } from '@shared/schema';
+import { contactService, ContactFormData } from '@/lib/services';
 import {
   Form,
   FormControl,
@@ -18,10 +17,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
+// Form validation schema
+const contactFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  subject: z.string().optional(),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactFormValues = z.infer<typeof contactFormSchema>;
+
 const ContactForm = () => {
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof contactFormSchema>>({
+  const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",
@@ -32,8 +41,8 @@ const ContactForm = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: z.infer<typeof contactFormSchema>) => {
-      return apiRequest("POST", "/api/contact", values);
+    mutationFn: (values: ContactFormData) => {
+      return contactService.sendMessage(values);
     },
     onSuccess: () => {
       toast({
@@ -52,7 +61,7 @@ const ContactForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof contactFormSchema>) {
+  function onSubmit(values: ContactFormValues) {
     mutation.mutate(values);
   }
 

@@ -3,9 +3,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { leadFormSchema } from '@shared/schema';
+import { leadsService, LeadFormData } from '@/lib/services';
 import {
   Form,
   FormControl,
@@ -19,11 +18,21 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
+// Form validation schema
+const leadFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits").max(15),
+  education: z.string().optional(),
+});
+
+type LeadFormValues = z.infer<typeof leadFormSchema>;
+
 const EarlyAccessForm = () => {
   const { toast } = useToast();
   const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
 
-  const form = useForm<z.infer<typeof leadFormSchema>>({
+  const form = useForm<LeadFormValues>({
     resolver: zodResolver(leadFormSchema),
     defaultValues: {
       name: "",
@@ -34,8 +43,8 @@ const EarlyAccessForm = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: z.infer<typeof leadFormSchema>) => {
-      return apiRequest("POST", "/api/leads", values);
+    mutationFn: (values: LeadFormData) => {
+      return leadsService.createLead(values);
     },
     onSuccess: () => {
       toast({
@@ -55,7 +64,7 @@ const EarlyAccessForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof leadFormSchema>) {
+  function onSubmit(values: LeadFormValues) {
     mutation.mutate(values);
   }
 
