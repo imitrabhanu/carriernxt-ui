@@ -64,14 +64,14 @@ const Home = () => {
                 <div className="w-64 sm:w-80 shadow-2xl rounded-3xl overflow-hidden border-8 border-white">
                   <img
                     src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                    alt="AI Career Architect App"
+                    alt="Career NXT App"
                     className="w-full"
                   />
                 </div>
                 <div className="absolute top-1/4 -left-4 sm:left-0 w-56 sm:w-64 shadow-2xl rounded-3xl overflow-hidden border-8 border-white transform -rotate-6">
                   <img
                     src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                    alt="Students using AI Career Architect"
+                    alt="Students using Career NXT"
                     className="w-full"
                   />
                 </div>
@@ -87,7 +87,7 @@ const Home = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-heading font-bold text-3xl sm:text-4xl text-foreground mb-4">
-              Why Choose AI Career Architect?
+              Why Choose Career NXT?
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Discover how our AI-powered platform is transforming career
@@ -181,14 +181,14 @@ const Home = () => {
                 <div className="border-8 border-white shadow-2xl rounded-3xl overflow-hidden inline-block">
                   <img
                     src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                    alt="AI Career Architect App Interface"
+                    alt="Career NXT App Interface"
                     className="w-72 h-auto"
                   />
                 </div>
                 <div className="absolute -bottom-10 -right-10 border-8 border-white shadow-2xl rounded-3xl overflow-hidden inline-block rotate-6 z-10">
                   <img
                     src="https://images.unsplash.com/photo-1581287053822-fd7bf4f4bfec?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                    alt="AI Career Architect Chat Interface"
+                    alt="Career NXT Chat Interface"
                     className="w-48 h-auto"
                   />
                 </div>
@@ -207,7 +207,7 @@ const Home = () => {
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Hear from students and parents who've discovered their career
-              paths with AI Career Architect.
+              paths with Career NXT.
             </p>
           </div>
 
@@ -232,7 +232,7 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="font-heading font-bold text-3xl sm:text-4xl mb-6">
-                Get Early Access to AI Career Architect
+                Get Early Access to Career NXT
               </h2>
               <p className="text-white/90 text-lg mb-8">
                 Join our exclusive waitlist and be among the first to experience

@@ -33,7 +33,7 @@ const Header = () => {
               <Bot size={20} />
             </div>
             <span className="font-heading font-bold text-xl text-foreground">
-              AI Career Architect
+              Career NXT
             </span>
           </Link>
 

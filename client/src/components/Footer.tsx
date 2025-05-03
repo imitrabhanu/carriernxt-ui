@@ -12,7 +12,7 @@ const Footer = () => {
                 <Bot size={20} />
               </div>
               <span className="font-heading font-bold text-xl text-white">
-                AI Career Architect
+                Career NXT
               </span>
             </div>
             <p className="text-gray-400 mb-6">
@@ -145,7 +145,7 @@ const Footer = () => {
         </div>
 
         <div className="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} AI Career Architect. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Career NXT. All rights reserved.</p>
         </div>
       </div>
     </footer>

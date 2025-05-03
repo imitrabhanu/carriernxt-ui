@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -22,25 +23,78 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut, RefreshCw } from "lucide-react";
 import { formatDistance } from "date-fns";
-import { Lead, ContactMessage } from "@/lib/services";
+import { Lead, ContactMessage, leadsService, contactService } from "@/lib/services";
+import { useToast } from "@/hooks/use-toast";
+
+// Mock data for contact messages (to be used until the backend API is fixed)
+const mockContactMessages: ContactMessage[] = [
+  {
+    id: 1,
+    name: "Robert Brown",
+    email: "robert@example.com",
+    subject: "Service Inquiry",
+    message: "I would like to know more about your services and pricing.",
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    id: 2,
+    name: "Sarah Wilson",
+    email: "sarah@example.com",
+    subject: "Technical Support",
+    message: "I'm having trouble with your product. Can you help me resolve this issue?",
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+  }
+];
 
 export default function AdminPage() {
-  const { user, logoutMutation } = useAuth();
-  
-  const { data: leads = [], isLoading: isLeadsLoading } = useQuery<Lead[]>({
-    queryKey: ["/leads"],
-    enabled: !!user,
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>(mockContactMessages);
+  const [isContactsLoading, setIsContactsLoading] = useState(false);
+
+  // Fetch leads from the backend
+  const { 
+    data: leads = [], 
+    isLoading: isLeadsLoading,
+    error: leadsError,
+    refetch: refetchLeads,
+    isRefetching: isRefetchingLeads
+  } = useQuery({
+    queryKey: ['leads'],
+    queryFn: leadsService.getLeads,
   });
-  
-  const { data: contactMessages = [], isLoading: isContactsLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/contact"],
-    enabled: !!user,
-  });
-  
+
+  // Show error toast if leads fetch fails
+  useEffect(() => {
+    if (leadsError) {
+      toast({
+        title: "Error loading leads",
+        description: "There was a problem loading the leads data.",
+        variant: "destructive",
+      });
+    }
+  }, [leadsError, toast]);
+
+  const handleRefreshLeads = async () => {
+    try {
+      await refetchLeads();
+      toast({
+        title: "Data refreshed",
+        description: "The leads data has been refreshed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Refresh failed",
+        description: "Failed to refresh the leads data.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleLogout = () => {
-    logoutMutation.mutate();
+    logout();
   };
 
   return (
@@ -49,8 +103,8 @@ export default function AdminPage() {
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="flex items-center gap-4">
           <p className="text-muted-foreground">Welcome, {user?.name}</p>
-          <Button variant="outline" size="sm" onClick={handleLogout} disabled={logoutMutation.isPending}>
-            {logoutMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4 mr-2" />}
+          <Button variant="outline" size="sm" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
             Logout
           </Button>
         </div>
@@ -64,11 +118,25 @@ export default function AdminPage() {
         
         <TabsContent value="leads">
           <Card>
-            <CardHeader>
-              <CardTitle>Leads</CardTitle>
-              <CardDescription>
-                View all potential customers who have expressed interest
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Leads</CardTitle>
+                <CardDescription>
+                  View all potential customers who have expressed interest
+                </CardDescription>
+              </div>
+              <Button 
+                size="sm" 
+                onClick={handleRefreshLeads} 
+                disabled={isLeadsLoading || isRefetchingLeads}
+              >
+                {isRefetchingLeads ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                Refresh
+              </Button>
             </CardHeader>
             <CardContent>
               {isLeadsLoading ? (

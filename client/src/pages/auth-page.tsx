@@ -16,15 +16,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
+// Very basic validation - just require the fields to be filled
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function AuthPage() {
-  const { user, loginMutation } = useAuth();
+  const { user, isLoading, login } = useAuth();
   
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -34,8 +35,9 @@ export default function AuthPage() {
     },
   });
 
-  const onLoginSubmit = (values: LoginFormValues) => {
-    loginMutation.mutate(values);
+  const onLoginSubmit = async (values: LoginFormValues) => {
+    console.log("Submitting login with values:", values);
+    await login(values.email, values.password);
   };
   
   // Redirect if already logged in
@@ -63,9 +65,9 @@ export default function AuthPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Username</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter email" {...field} />
+                          <Input placeholder="Enter username" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -88,12 +90,12 @@ export default function AuthPage() {
                   
                   <div className="text-sm text-muted-foreground mb-2">
                     <p>Demo credentials:</p>
-                    <p>Email: demo@example.com</p>
+                    <p>Username: demo@example.com</p>
                     <p>Password: password123</p>
                   </div>
                   
-                  <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
-                    {loginMutation.isPending ? (
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Please wait
@@ -112,7 +114,7 @@ export default function AuthPage() {
       {/* Right Column - Hero */}
       <div className="hidden md:flex flex-1 bg-gradient-to-br from-teal-500 to-teal-700 items-center justify-center p-8 text-white">
         <div className="max-w-lg">
-          <h1 className="text-4xl font-bold mb-4">AI Career Architect Dashboard</h1>
+          <h1 className="text-4xl font-bold mb-4">CarrierNXT Dashboard</h1>
           <p className="text-lg mb-6">
             Welcome to the admin dashboard where you can manage leads and contact messages
             from your website visitors.

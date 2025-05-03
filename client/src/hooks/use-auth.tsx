@@ -1,10 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
-import {
-  useQuery,
-  useMutation,
-  UseMutationResult,
-} from "@tanstack/react-query";
-import { apiRequest, queryClient } from "../lib/api";
+import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 // Define types for auth-related data
@@ -17,87 +11,77 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
-  loginMutation: UseMutationResult<any, Error, LoginData>;
-  logoutMutation: UseMutationResult<void, Error, void>;
-};
-
-type LoginData = {
-  email: string;
-  password: string;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  const {
-    data: user,
-    error,
-    isLoading,
-  } = useQuery<User | null, Error>({
-    queryKey: ["/auth/current-user"],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/auth/current-user");
-        if (res.status === 401) return null;
-        if (!res.ok) throw new Error("Failed to fetch user");
-        return await res.json();
-      } catch (error) {
-        console.error("Error fetching current user:", error);
-        return null;
-      }
-    },
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  const loginMutation = useMutation({
-    mutationFn: async (credentials: LoginData) => {
-      const res = await apiRequest("POST", "/auth/login", credentials);
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["/auth/current-user"], data);
-      toast({
-        title: "Login successful",
-        description: `Welcome, ${data.name}!`,
-      });
-    },
-    onError: (error: Error) => {
+  // Check localStorage for existing user on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        localStorage.removeItem('user');
+      }
+    }
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Hardcoded credentials check
+      if (email === "demo@example.com" && password === "password123") {
+        const user = { email, name: "Demo User" };
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome, ${user.name}!`,
+        });
+      } else {
+        throw new Error("Invalid credentials");
+      }
+    } catch (err) {
+      setError(err as Error);
       toast({
         title: "Login failed",
-        description: error.message,
+        description: (err as Error).message,
         variant: "destructive",
       });
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      await apiRequest("POST", "/auth/logout");
-    },
-    onSuccess: () => {
-      queryClient.setQueryData(["/auth/current-user"], null);
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Logout failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+  };
 
   return (
     <AuthContext.Provider
       value={{
-        user: user ?? null,
+        user,
         isLoading,
         error,
-        loginMutation,
-        logoutMutation,
+        login,
+        logout
       }}
     >
       {children}
